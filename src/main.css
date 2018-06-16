@@ -24,6 +24,7 @@ html, body, #react{
 }
 
 .controls button {
+	min-height: 27px;
 	padding: 5px 10px;
 	font-size: 12px;
 }
@@ -55,12 +56,18 @@ h4 {
 }
 
 button {
-	border: 1px solid  var(--gray);
+	outline: none;
+	border: 1px solid var(--gray);
 	background-color: transparent;
 	margin: 4px;
 }
 
-button:hover {
+button:hover:not(:disabled) {
 	color: #fff;
 	background-color: var(--gray);
+}
+
+button:disabled {
+	cursor: not-allowed;
+	opacity: 0.2;
 }

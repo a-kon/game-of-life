@@ -1,5 +1,5 @@
 import React from 'react';
-import CellProps from '../helpers';
+import CellProps from '../Logic/helpers';
 
 export const Cell = ({ status, rowIndex, cellIndex, handleCellClick }) => (
   <div

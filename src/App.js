@@ -1,48 +1,70 @@
 import React from 'react';
 import Controls from './Components/Controls';
 import GameField from './Components/GameField';
-import { getLeftCellByRow, getRigthCellByRow } from './helpers';
+import { getNextStepField, checkIsFieldEmpty } from './Logic/FieldCalcs';
 
 const DEFAULT_CELL = false;
-const DEFAULT_STRING = new Array(15).fill(DEFAULT_CELL);
+const DEFAULT_STRING = new Array(20).fill(DEFAULT_CELL);
 const getDefaultStringInstance = () => DEFAULT_STRING.slice();
-const DEFAULT_FIELD = new Array(15).fill(null).map(getDefaultStringInstance);
+const DEFAULT_FIELD = new Array(20).fill(null).map(getDefaultStringInstance);
 
 export default class App extends React.PureComponent {
   state = {
-    running: false,
+    isRunning: false,
+    generation: 0,
     field: DEFAULT_FIELD,
+    fieldHistory: [DEFAULT_FIELD],
   }
 
   componentDidUpdate = (prevProps, prevState) => {
-    if (!prevState.running && this.state.running) {
-      this.stepTimer = setInterval(() => this.handleStep(), 250);
+    if (!prevState.isRunning && this.state.isRunning) {
+      this.stepTimer = setInterval(() => this.handleNextGen(), 250);
     }
-    if (prevState.running && !this.state.running) {
+    if (prevState.isRunning && !this.state.isRunning) {
       clearInterval(this.stepTimer);
     }
   }
 
-  handleGameStart = () => this.setState({ running: true })
+  handleGameStart = () => this.setState({ isRunning: true })
 
-  handleReset = () => this.setState({
-    running: false,
-  })
+  handleGameStop = () => this.setState({ isRunning: false })
+
+  handleNextGenClick = () => {
+    this.handleGameStop();
+    this.handleNextGen();
+  }
 
   handleNextGen = () => {
     this.handleChangeGeneration('next');
-    this.handleStep();
-    console.log('handleNextGen');
   }
 
   handlePrevGen = () => {
     this.handleChangeGeneration('prev');
-    console.log('handlePrevGen');
   }
 
-  handleChangeGeneration = (direction) => {
-    this.setState(prevState => ({
-      generation: direction === 'next' ? prevState.direction + 1 : prevState.direction - 1,
+  handleChangeGeneration(direction) {
+    const newField = getNextStepField(this.state.field);
+
+    if (checkIsFieldEmpty(newField)) {
+      return this.handleGameStop();
+    }
+
+    if (direction === 'next') {
+      this.setState(({ generation, fieldHistory, field }) => ({
+        generation: generation + 1,
+        field: newField,
+        fieldHistory: fieldHistory.slice(0, generation).concat([field]),
+      }));
+
+      return;
+    }
+
+    if (this.state.generation - 1 < 0) return;
+
+    return this.setState(prevState => ({
+      isRunning: false,
+      generation: prevState.generation - 1,
+      field: prevState.fieldHistory[prevState.generation - 1],
     }));
   }
 
@@ -54,46 +76,18 @@ export default class App extends React.PureComponent {
     this.setState({ field });
   }
 
-  handleStep = () => {
-    const { field } = this.state;
-
-    const newField = field.map((row, rowIndex) => {
-      const prevRow = field[rowIndex - 1] || field[field.length - 1];
-      const nextRow = field[rowIndex + 1] || field[0];
-      return row.map((cell, cellIndex) => {
-        const neighbors = [
-          getLeftCellByRow(prevRow, cellIndex), prevRow[cellIndex], getRigthCellByRow(prevRow, cellIndex),
-          getLeftCellByRow(row, cellIndex), getRigthCellByRow(row, cellIndex),
-          getLeftCellByRow(nextRow, cellIndex), nextRow[cellIndex], getRigthCellByRow(nextRow, cellIndex),
-        ];
-
-        const lifeVicinityCount = neighbors.filter(bool => bool).length;
-
-        if (!cell) {
-          return lifeVicinityCount === 3;
-        }
-
-        return lifeVicinityCount === 2 || lifeVicinityCount === 3;
-      });
-    });
-
-    this.setState({ field: newField });
-  }
-
-
-  getLeftCellByRow = (row, cellIndex) => (typeof row[cellIndex - 1] === 'undefined' ? row[row.length - 1] : row[cellIndex - 1]);
-  getRigthCellByRow = (row, cellIndex) => (typeof row[cellIndex + 1] === 'undefined' ? row[0] : row[cellIndex + 1]);
-
   render = () => {
-    const { field } = this.state;
+    const { field, isRunning, generation } = this.state;
 
     return (
       <div id="main-wrapper">
       <Controls
-          handleGameStart={this.handleGameStart}
-          handleReset={this.handleReset}
-          handleNextGen={this.handleNextGen}
-          handlePrevGen={this.handlePrevGen}
+        hasNoPast={generation <= 0}
+        isRunning={isRunning}
+        handleGameStart={this.handleGameStart}
+        handleGameStop={this.handleGameStop}
+        handleNextGen={this.handleNextGenClick}
+        handlePrevGen={this.handlePrevGen}
       />
       <GameField field={field} handleCellClick={this.handleCellClick}/>
       </div>

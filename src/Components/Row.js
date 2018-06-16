@@ -1,5 +1,5 @@
 import React from 'react';
-import RowProps from '../helpers';
+import RowProps from '../Logic/helpers';
 import Cell from './Cell';
 
 const Row = ({ row, rowIndex, handleCellClick }) => (

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FieldProps } from '../helpers';
+import { FieldProps } from '../Logic/helpers';
 import Row from './Row';
 
 

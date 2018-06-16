@@ -17,6 +17,3 @@ export const FieldProps = PropTypes.shape({
   field: RowProps.isRequired,
   handleCellClick: PropTypes.func.isRequired,
 }).isRequired;
-
-export const getLeftCellByRow = (row, cellIndex) => (typeof row[cellIndex - 1] === 'undefined' ? row[row.length - 1] : row[cellIndex - 1]);
-export const getRigthCellByRow = (row, cellIndex) => (typeof row[cellIndex + 1] === 'undefined' ? row[0] : row[cellIndex + 1]);

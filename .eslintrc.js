@@ -16,6 +16,9 @@ module.exports = {
     document: false
   },
   rules: {
+    'object-curly-newline': ['error', { 'multiline': true, 'consistent': true }],
+    'consistent-return': 'warn',
+    "max-len": ["error", 120],
     'import/no-extraneous-dependencies': [
       'error',
       {
