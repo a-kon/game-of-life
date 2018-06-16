@@ -2,11 +2,9 @@ import React from 'react';
 import Controls from './Components/Controls';
 import GameField from './Components/GameField';
 import { getNextStepField, checkIsFieldEmpty } from './Logic/FieldCalcs';
+import defaultField from './Logic/Presets';
 
-const DEFAULT_CELL = false;
-const DEFAULT_STRING = new Array(20).fill(DEFAULT_CELL);
-const getDefaultStringInstance = () => DEFAULT_STRING.slice();
-const DEFAULT_FIELD = new Array(20).fill(null).map(getDefaultStringInstance);
+const DEFAULT_FIELD = defaultField;
 
 export default class App extends React.PureComponent {
   state = {
