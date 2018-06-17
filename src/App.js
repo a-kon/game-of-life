@@ -4,17 +4,15 @@ import GameField from './Components/GameField';
 import { getNextStepField, checkIsFieldEmpty } from './Logic/FieldCalcs';
 import defaultField from './Logic/Presets';
 
-const DEFAULT_FIELD = defaultField;
-
 export default class App extends React.PureComponent {
   state = {
     isRunning: false,
     generation: 0,
-    field: DEFAULT_FIELD,
-    fieldHistory: [DEFAULT_FIELD],
+    field: defaultField,
+    fieldHistory: [defaultField],
   }
 
-  componentDidUpdate = (prevProps, prevState) => {
+  componentDidUpdate(prevProps, prevState) {
     if (!prevState.isRunning && this.state.isRunning) {
       this.stepTimer = setInterval(() => this.handleNextGen(), 250);
     }
@@ -26,6 +24,13 @@ export default class App extends React.PureComponent {
   handleGameStart = () => this.setState({ isRunning: true })
 
   handleGameStop = () => this.setState({ isRunning: false })
+
+  handleSetPreset = preset => this.setState({
+    isRunning: true,
+    field: preset,
+    fieldHistory: [preset],
+    generation: 0,
+  });
 
   handleNextGenClick = () => {
     this.handleGameStop();
@@ -44,7 +49,7 @@ export default class App extends React.PureComponent {
     const newField = getNextStepField(this.state.field);
 
     if (checkIsFieldEmpty(newField)) {
-      return this.handleGameStop();
+      this.handleGameStop();
     }
 
     if (direction === 'next') {
@@ -74,12 +79,13 @@ export default class App extends React.PureComponent {
     this.setState({ field });
   }
 
-  render = () => {
+  render() {
     const { field, isRunning, generation } = this.state;
 
     return (
       <div id="main-wrapper">
       <Controls
+        handleSetPreset={this.handleSetPreset}
         hasNoPast={generation <= 0}
         isRunning={isRunning}
         handleGameStart={this.handleGameStart}

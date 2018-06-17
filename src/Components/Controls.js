@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import * as presets from '../Logic/Presets';
 
 const Controls = ({
   handleGameStart,
@@ -8,6 +9,7 @@ const Controls = ({
   handlePrevGen,
   isRunning,
   hasNoPast,
+  handleSetPreset,
 }) => (
   <div className="controls">
     {
@@ -22,10 +24,17 @@ const Controls = ({
         <button className="next" onClick={handleNextGen}>next</button>
       </div>
     </div>
+    <div>
+      <h4>presets</h4>
+      <button onClick={() => handleSetPreset(presets.glider)}>glider</button>
+      <button onClick={() => handleSetPreset(presets.lightweightSpaceship)}>lwss</button>
+      <button onClick={() => handleSetPreset(presets.pulsar)}>pulsar</button>
+    </div>
   </div>
 );
 
 Controls.propTypes = {
+  handleSetPreset: PropTypes.func.isRequired,
   handleGameStart: PropTypes.func.isRequired,
   handleGameStop: PropTypes.func.isRequired,
   handleNextGen: PropTypes.func.isRequired,

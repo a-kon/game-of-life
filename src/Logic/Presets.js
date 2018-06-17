@@ -17,6 +17,7 @@ class Presets extends Matrix {
     return this.fill(rows, cells).getArray();
   }
 
+
   createPulsar = () => {
     const rows = [
       2,
