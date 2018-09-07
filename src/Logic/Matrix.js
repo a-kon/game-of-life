@@ -1,10 +1,10 @@
 export default class Matrix {
   constructor(width = 15, height) {
     const DEFAULT_CELL = 0;
-    const DEFAULT_STRING = new Array(width).fill(DEFAULT_CELL);
+    const DEFAULT_STRING = Array.from({ length: width }, (() => DEFAULT_CELL));
     const getDefaultStringInstance = () => DEFAULT_STRING.slice();
 
-    this.array = new Array(height || width).fill(null).map(getDefaultStringInstance);
+    this.array = Array.from({ length: height || width }, getDefaultStringInstance);
   }
 
   fill = (rowsToFill, cellsToFill) => {
